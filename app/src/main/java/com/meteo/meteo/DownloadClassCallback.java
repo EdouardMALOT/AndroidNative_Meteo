@@ -7,5 +7,5 @@ import java.util.List;
  */
 
 public interface DownloadClassCallback {
-    void DownloadClassCallback(List<String> list, String CityName);
+    void DownloadClassCallback(String CityName);
 }

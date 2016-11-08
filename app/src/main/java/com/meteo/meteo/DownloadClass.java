@@ -134,7 +134,7 @@ public class DownloadClass extends AsyncTask<String, Void , List<String>> {
     //////////////////////////////////
     protected void onPostExecute(List<String> result) {
         if(result != null){
-            CallbackTask.DownloadClassCallback(result, CityName);
+          //  CallbackTask.DownloadClassCallback(result, CityName);
         }
     }
 

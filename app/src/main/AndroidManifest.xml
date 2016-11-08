@@ -33,6 +33,10 @@
         </activity>
 
 
+        <provider
+            android:authorities="com.meteo.meteo"
+            android:name=".data.WeatherProvider" />
+
     </application>
 
 </manifest>

@@ -2,30 +2,26 @@ package com.meteo.meteo;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.meteo.meteo.data.WeatherContract;
 
 
-public class MainActivity extends AppCompatActivity implements DownloadClassCallback {
+public class MainActivity extends AppCompatActivity {
 
     public static String LOG_TAG = MainActivity.class.getSimpleName();
 
+    //private ArrayAdapter MeteoAdapteur;
+    private ForecastAdapter mForecastAdapteur;
 
-    private ArrayAdapter MeteoAdapteur;
     private ProgressDialog DiagWaitMsg;
 
     //////////////////////////////////
@@ -38,33 +34,56 @@ public class MainActivity extends AppCompatActivity implements DownloadClassCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Create the datas
-        //----------------
-            List<String> meteo_list = new ArrayList<String>();
 
-        //Create adapteur
-            MeteoAdapteur = new ArrayAdapter<String>(getApplicationContext(), R.layout.list_item_meteo, R.id.list_item_meteo_text_view, meteo_list);
+        //METHODE 1
+        //---------
+                //Create the datas
+                //----------------
+                    //List<String> meteo_list = new ArrayList<String>();
 
-        //Link the listview with the adapter
-            ListView listmeteo = (ListView) this.findViewById(R.id.listview_meteo);
-            listmeteo.setAdapter(MeteoAdapteur);
+                //Create adapteur
+                    //MeteoAdapteur = new ArrayAdapter<String>(getApplicationContext(), R.layout.list_item_meteo, R.id.list_item_meteo_text_view, meteo_list);
 
-        //Click listener
-            listmeteo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    //Toast.makeText(getApplicationContext(),"You click on row n°"+i+1, Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                        intent.putExtra(intent.EXTRA_TEXT,MeteoAdapteur.getItem(i).toString());
-                    startActivity(intent);
-                }
-            });
 
-        // Wait Dialogue box
-            DiagWaitMsg = new ProgressDialog(this);
-                DiagWaitMsg.setIndeterminate(true);
-                DiagWaitMsg.setCancelable(false);
-                DiagWaitMsg.setMessage(getString(R.string.LoadingText));
+                //Link the listview with the adapter
+                    //ListView listmeteo = (ListView) this.findViewById(R.id.listview_meteo);
+                    //listmeteo.setAdapter(MeteoAdapteur);
+
+                //Click listener
+                    //listmeteo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    //    @Override
+                    //    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    //        //Toast.makeText(getApplicationContext(),"You click on row n°"+i+1, Toast.LENGTH_SHORT).show();
+                    //        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                    //            intent.putExtra(intent.EXTRA_TEXT,MeteoAdapteur.getItem(i).toString());
+                    //        startActivity(intent);
+                    //    }
+                    //});
+
+        //Methode 2
+        //---------
+
+            //Cursor Adaptor Methode
+            //-----------------------
+                String locationSetting = Utility.getPreferredLocation(this);
+
+                // Sort order:  Ascending, by date.
+                String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+                Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationSetting, System.currentTimeMillis());
+
+                Cursor cur = getContentResolver().query(weatherForLocationUri, null, null, null, sortOrder);
+
+                mForecastAdapteur = new ForecastAdapter(this, cur, 0);
+
+                 ListView listmeteo = (ListView) this.findViewById(R.id.listview_meteo);
+                listmeteo.setAdapter(mForecastAdapteur);
+
+
+//        // Wait Dialogue box
+//            DiagWaitMsg = new ProgressDialog(this);
+//                DiagWaitMsg.setIndeterminate(true);
+//                DiagWaitMsg.setCancelable(false);
+//                DiagWaitMsg.setMessage(getString(R.string.LoadingText));
     }
 
 
@@ -77,9 +96,10 @@ public class MainActivity extends AppCompatActivity implements DownloadClassCall
     protected void onStart() {
         super.onStart();
 
-        DiagWaitMsg.show();
+        //DiagWaitMsg.show();
         Refresh_weather();  //Update meteo
     }
+
 
     //////////////////////////////////
     //                              //
@@ -87,12 +107,21 @@ public class MainActivity extends AppCompatActivity implements DownloadClassCall
     //                              //
     //////////////////////////////////
     public void Refresh_weather(){
-        //Get Value
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
 
-        // Download Weather info
-            new DownloadClass(location, this);              //It will call  DownloadClassCallback when download is finished
+        //METHODE 1
+        //---------
+            // Get Value
+            //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            //String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+
+            // Download Weather info
+            //    new DownloadClass(location, this);              //It will call  DownloadClassCallback when download is finished
+
+        //METHODE 2
+        //---------
+            FetchWeatherTask weatherTask = new FetchWeatherTask(this);
+            String location = Utility.getPreferredLocation(this);
+            weatherTask.execute(location);
     }
 
     //////////////////////////////////
@@ -100,21 +129,21 @@ public class MainActivity extends AppCompatActivity implements DownloadClassCall
     //     DownloadClassCallback    //
     //                              //
     //////////////////////////////////
-    @Override
-    public void DownloadClassCallback(List<String> list, String CityName) {
-
-        //Update list
-            MeteoAdapteur.clear();
-            for(int i=0; i < list.size(); i++)
-            {
-                MeteoAdapteur.add(list.get(i));
-            }
-
-        //Update City name
-            setTitle(getString(R.string.app_name) + " : " +CityName);
-
-        DiagWaitMsg.dismiss();
-    }
+//    @Override
+//    public void DownloadClassCallback(List<String> list, String CityName) {
+//
+//        //Update list
+//            MeteoAdapteur.clear();
+//            for(int i=0; i < list.size(); i++)
+//            {
+//                MeteoAdapteur.add(list.get(i));
+//            }
+//
+//        //Update City name
+//            setTitle(getString(R.string.app_name) + " : " +CityName);
+//
+//        DiagWaitMsg.dismiss();
+//    }
 
 
 
@@ -156,8 +185,10 @@ public class MainActivity extends AppCompatActivity implements DownloadClassCall
     //////////////////////////////////
     public void OpenMap(){
         //Get Value
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+            //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            //String location = prefs.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+
+            String location = Utility.getPreferredLocation(this);
 
         //Compute Url
             Uri geoLocation = Uri.parse("geo:0,0?").buildUpon()
