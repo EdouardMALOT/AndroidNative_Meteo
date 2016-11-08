@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Meteo</string>
+    <string name="refresh_string">Refresh</string>
+    <string name="title_activity_setting">Paramètres</string>
+    <string name="params_string">Paramètres</string>
+
+    <string name="pref_location_label">Code postal</string>
+    <string name="pref_location_key" translatable="false">pref_location</string>
+    <string name="pref_location_default" translatable="false">13100</string>
+
+    <string name="params_map">Map</string>
+    <string name="no_map_app_msp">Veuillez installer Google MAP</string>
+    <string name="share_title">Partager</string>
+    <string name="no_share_app_msp">Aucune App permets de partager ce contenu</string>
+    <string name="LoadingText">Chargement en cours...</string>
+
+
+</resources>

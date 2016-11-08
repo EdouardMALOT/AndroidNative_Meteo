@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--
+    <item
+            android:id="@+id/Menu_refresh"
+            android:title="@string/refresh_string"
+            app:showAsAction="never"
+        />
+    -->
+
+    <item
+        android:id="@+id/Menu_Params"
+        android:title="@string/params_string"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/Menu_Map"
+        android:title="@string/params_map"
+        app:showAsAction="never"
+        />
+
+</menu>
