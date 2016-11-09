@@ -35,7 +35,10 @@
 
         <provider
             android:authorities="com.meteo.meteo"
-            android:name=".data.WeatherProvider" />
+            android:name=".data.WeatherProvider"
+            android:enabled="true"
+            android:exported="true"
+            />
 
     </application>
 

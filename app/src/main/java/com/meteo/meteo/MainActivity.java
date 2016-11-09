@@ -24,8 +24,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public static String LOG_TAG = MainActivity.class.getSimpleName();
     private ForecastAdapter mForecastAdapteur;
-    private static final int FORECAST_LOADER = 0;
+    private String mCurrentLocation;
 
+    private static final int FORECAST_LOADER = 0;
 
     private static final String[] FORECAST_COLUMNS = {
             WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
@@ -48,8 +49,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             static final int COL_WEATHER_CONDITION_ID = 6;
             static final int COL_COORD_LAT = 7;
             static final int COL_COORD_LONG = 8;
-
-
 
     //////////////////////////////////
     //                              //
@@ -86,6 +85,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
             });
 
+
+        //Store Current Location
+            mCurrentLocation = Utility.getPreferredLocation(this);
 
         //Start Loader
         //------------
@@ -131,7 +133,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onStart() {
         super.onStart();
 
-        Refresh_weather();  //Update meteo
+        Refresh_weather();          //Update meteo on first start
+    }
+
+    //////////////////////////////////
+    //                              //
+    //           onResume           //
+    //                              //
+    //////////////////////////////////
+    @Override
+    protected void onResume() {     //When come back from an other screen (like DetailActivity) check if location changed
+        super.onResume();
+
+        String location = Utility.getPreferredLocation(this);
+
+        if(location != null && !location.contentEquals(mCurrentLocation)){      //Update datas if changed
+            Refresh_weather();
+            getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+            mCurrentLocation = location;
+        }
     }
 
     //////////////////////////////////
