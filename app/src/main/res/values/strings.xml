@@ -1,4 +1,5 @@
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/tools">
+
     <string name="app_name">Meteo</string>
     <string name="refresh_string">Refresh</string>
     <string name="title_activity_setting">Paramètres</string>
@@ -23,5 +24,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="today">Aujourd\'hui</string>
+
+    <!-- Temperature format [CHAR LIMIT=5 -->
+    <string name="format_temperature"><xliff:g id="temp">%1.1f</xliff:g>\u00B0C</string>
 
 </resources>

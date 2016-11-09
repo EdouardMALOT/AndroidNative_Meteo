@@ -83,8 +83,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         String dateString = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
         String weatherDescription =data.getString(COL_WEATHER_DESC);
-        String high = Utility.formatTemperature( data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
-        String low = Utility.formatTemperature( data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+        String high = Utility.formatTemperature(getApplicationContext(), data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+        String low = Utility.formatTemperature(getApplicationContext(), data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
 
         mMeteoText = String.format("%s - %s - %s/%s", dateString, weatherDescription, low, high);
 

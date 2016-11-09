@@ -8,7 +8,9 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Utility {
 
@@ -37,25 +39,43 @@ public class Utility {
     //      formatTemperature       //
     //                              //
     //////////////////////////////////
-    static String formatTemperature(double temperature, boolean isMetric) {
+    static String formatTemperature(Context context,double temperature, boolean... isMetric) {
 
         double temp;
-        if ( !isMetric ) {
-            temp = 9*temperature/5+32;
-        } else {
+        if(isMetric.length > 0)
+        {
+            if ( !isMetric[0] ) {
+                temp = 9*temperature/5+32;
+            } else {
+                temp = temperature;
+            }
+        }else{
             temp = temperature;
         }
-        return String.format("%.1f", temp);
+
+        return context.getString(R.string.format_temperature, temp);
     }
 
     //////////////////////////////////
     //                              //
-    //      formatTemperature       //
+    //          formatDate          //
     //                              //
     //////////////////////////////////
     static String formatDate(long dateInMillis) {
-        Date date = new Date(dateInMillis);
-        return DateFormat.getDateInstance().format(date);
 
+        //Check if the Day is in the next week
+        //------------------------------------
+            if( (dateInMillis - System.currentTimeMillis()) > 6*24*3600*1000 )
+            {
+                //Date including mounth and year
+                    Date date = new Date(dateInMillis);
+                    return DateFormat.getDateInstance().format(date);
+            }else{
+                //Get The Day
+                    Date date = new Date(dateInMillis);
+                    String Day=  new SimpleDateFormat("EEEE", Locale.FRANCE).format(date);
+                    String DayCapitalized = Day.substring(0,1).toUpperCase() + Day.substring(1);
+                    return DayCapitalized;
+            }
     }
 }

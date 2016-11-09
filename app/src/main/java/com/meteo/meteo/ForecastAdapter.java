@@ -6,6 +6,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.meteo.meteo.data.WeatherContract;
@@ -13,7 +14,6 @@ import com.meteo.meteo.data.WeatherContract;
 /**
  * Created by edouard on 08/11/16.
  */
-
 
 public class ForecastAdapter extends CursorAdapter {
 
@@ -33,10 +33,26 @@ public class ForecastAdapter extends CursorAdapter {
     //////////////////////////////////
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_item_meteo, parent, false);
+        View view;
+        int viewtype = getItemViewType(cursor.getPosition());
+
+        //Check for the layout
+        //-------------------
+            switch (viewtype) {
+                case TODAY_VIEW:
+                    view = LayoutInflater.from(context).inflate(R.layout.list_item_meteo_today, parent, false);
+                    break;
+                default:
+                    view = LayoutInflater.from(context).inflate(R.layout.list_item_meteo, parent, false);
+                    break;
+            }
+
+        //View Holder
+        //-----------
+            view.setTag(new ViewHolder(view));
+
         return view;
     }
-
     //////////////////////////////////
     //                              //
     //           bindView           //
@@ -44,27 +60,63 @@ public class ForecastAdapter extends CursorAdapter {
     //////////////////////////////////
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView tv = (TextView)view;
-        tv.setText(convertCursorRowToUXFormat(cursor));
+
+        //Restore references to the view
+        //-------------------------------
+        ViewHolder viewholder = (ViewHolder) view.getTag();
+
+        //Date & Description
+        //------------------
+        viewholder.dateView.setText(Utility.formatDate(cursor.getLong(MainActivity.COL_WEATHER_DATE)));
+        viewholder.descriptionView.setText(cursor.getString(MainActivity.COL_WEATHER_DESC));
+
+        //Températures
+        //------------
+        viewholder.highTempView.setText(Utility.formatTemperature(context,cursor.getDouble(MainActivity.COL_WEATHER_MAX_TEMP)));
+        viewholder.lowTempView.setText(Utility.formatTemperature(context,cursor.getDouble(MainActivity.COL_WEATHER_MIN_TEMP)));
     }
 
     //////////////////////////////////
     //                              //
-    //  convertCursorRowToUXFormat  //
+    //            ViewType          //
     //                              //
     //////////////////////////////////
-    private String convertCursorRowToUXFormat(Cursor cursor) {
+    private static final int TODAY_VIEW = 0;
+    private static final int STANDARD_VIEW = 1;
 
-        String highAndLow = formatHighLows(cursor.getDouble(MainActivity.COL_WEATHER_MAX_TEMP), cursor.getDouble(MainActivity.COL_WEATHER_MIN_TEMP));
-        return Utility.formatDate(cursor.getLong(MainActivity.COL_WEATHER_DATE)) + " - " + cursor.getString(MainActivity.COL_WEATHER_DESC) + " - " + highAndLow;
-
+    @Override
+    public int getViewTypeCount() {
+        return 2;                           //We now have 2 possible layout
     }
 
-    private String formatHighLows(double high, double low) {
-        boolean isMetric = Utility.isMetric(mContext);
-        //String highLowStr = Utility.formatTemperature(high, isMetric) + "/" + Utility.formatTemperature(low, isMetric)+"°C";
-        String highLowStr = Utility.formatTemperature(low, isMetric) + "/" + Utility.formatTemperature(high, isMetric)+"°C";
-        return highLowStr;
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0) {
+            return TODAY_VIEW;
+        } else {
+            return STANDARD_VIEW;
+        }
+    }
+
+    //////////////////////////////////
+    //                              //
+    //       ViewHolder Class       //
+    //                              //
+    //////////////////////////////////
+    public static class ViewHolder {
+        public final ImageView iconView;
+        public final TextView dateView;
+        public final TextView descriptionView;
+        public final TextView highTempView;
+        public final TextView lowTempView;
+
+        public ViewHolder(View view) {
+            iconView = (ImageView) view.findViewById(R.id.list_item_icon);
+            dateView = (TextView) view.findViewById(R.id.list_item_date_textview);
+            descriptionView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
+            highTempView = (TextView) view.findViewById(R.id.list_item_high_textview);
+            lowTempView = (TextView) view.findViewById(R.id.list_item_low_textview);
+        }
     }
 
 }
