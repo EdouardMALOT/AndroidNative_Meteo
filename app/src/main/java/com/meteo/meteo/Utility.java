@@ -52,7 +52,6 @@ public class Utility {
         }else{
             temp = temperature;
         }
-
         return context.getString(R.string.format_temperature, temp);
     }
 
@@ -72,10 +71,48 @@ public class Utility {
                     return DateFormat.getDateInstance().format(date);
             }else{
                 //Get The Day
-                    Date date = new Date(dateInMillis);
-                    String Day=  new SimpleDateFormat("EEEE", Locale.FRANCE).format(date);
-                    String DayCapitalized = Day.substring(0,1).toUpperCase() + Day.substring(1);
-                    return DayCapitalized;
+                    return getDayName(dateInMillis);
             }
+    }
+
+    //////////////////////////////////
+    //                              //
+    //          getDayName          //
+    //                              //
+    //////////////////////////////////
+    static String getDayName(long dateInMillis){
+        //Get The Day
+            Date date = new Date(dateInMillis);
+            String Day=  new SimpleDateFormat("EEEE", Locale.FRANCE).format(date);
+            String DayCapitalized = Day.substring(0,1).toUpperCase() + Day.substring(1);
+            return DayCapitalized;
+    }
+
+    //////////////////////////////////
+    //                              //
+    //     getFormattedMonthDay     //
+    //                              //
+    //////////////////////////////////
+    public static String getFormattedMonthDay(long dateInMillis ) {
+        SimpleDateFormat monthDayFormat = new SimpleDateFormat("dd MMMM");
+        String monthDayString = monthDayFormat.format(dateInMillis);
+        return monthDayString;
+    }
+
+    //////////////////////////////////
+    //                              //
+    //     getFormattedWind         //
+    //                              //
+    //////////////////////////////////
+    public static String getFormattedWind(Context context, float windSpeed, float degrees) {
+
+        int windFormat = R.string.format_wind_kmh;
+
+        final String[] directionsText = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+        final int DEGREES_TOTAL = 360;
+        final int DIR_TOTAL = 8;
+
+        String direction = directionsText[Math.round(degrees / (DEGREES_TOTAL / DIR_TOTAL)) % DIR_TOTAL];
+        return String.format(context.getString(windFormat), windSpeed, direction);
     }
 }
