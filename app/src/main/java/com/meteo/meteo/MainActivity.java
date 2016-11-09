@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -114,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         //Return Cursor
         return new CursorLoader(this, weatherForLocationUri,FORECAST_COLUMNS,null, null, sortOrder);
-
     }
 
     @Override
