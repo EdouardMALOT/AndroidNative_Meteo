@@ -55,21 +55,15 @@ public class ForecastAdapter extends CursorAdapter {
     //////////////////////////////////
     private String convertCursorRowToUXFormat(Cursor cursor) {
 
-        // get row indices for our cursor
-        int idx_max_temp = cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP);
-        int idx_min_temp = cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP);
-        int idx_date = cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_DATE);
-        int idx_short_desc = cursor.getColumnIndex(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC);
+        String highAndLow = formatHighLows(cursor.getDouble(MainActivity.COL_WEATHER_MAX_TEMP), cursor.getDouble(MainActivity.COL_WEATHER_MIN_TEMP));
+        return Utility.formatDate(cursor.getLong(MainActivity.COL_WEATHER_DATE)) + " - " + cursor.getString(MainActivity.COL_WEATHER_DESC) + " - " + highAndLow;
 
-        String highAndLow = formatHighLows(cursor.getDouble(idx_max_temp), cursor.getDouble(idx_min_temp));
-
-        return Utility.formatDate(cursor.getLong(idx_date)) + " - " + cursor.getString(idx_short_desc) + " - " + highAndLow;
     }
-
 
     private String formatHighLows(double high, double low) {
         boolean isMetric = Utility.isMetric(mContext);
-        String highLowStr = Utility.formatTemperature(high, isMetric) + "/" + Utility.formatTemperature(low, isMetric)+"°C";
+        //String highLowStr = Utility.formatTemperature(high, isMetric) + "/" + Utility.formatTemperature(low, isMetric)+"°C";
+        String highLowStr = Utility.formatTemperature(low, isMetric) + "/" + Utility.formatTemperature(high, isMetric)+"°C";
         return highLowStr;
     }
 

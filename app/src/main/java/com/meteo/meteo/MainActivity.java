@@ -1,29 +1,59 @@
 package com.meteo.meteo;
 
-import android.app.ProgressDialog;
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.meteo.meteo.data.WeatherContract;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static String LOG_TAG = MainActivity.class.getSimpleName();
     private ForecastAdapter mForecastAdapteur;
+    private static final int FORECAST_LOADER = 0;
 
-    private ProgressDialog DiagWaitMsg;
+
+    private static final String[] FORECAST_COLUMNS = {
+            WeatherContract.WeatherEntry.TABLE_NAME + "." + WeatherContract.WeatherEntry._ID,
+            WeatherContract.WeatherEntry.COLUMN_DATE,
+            WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
+            WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+            WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+            WeatherContract.LocationEntry.COLUMN_COORD_LAT,
+            WeatherContract.LocationEntry.COLUMN_COORD_LONG
+    };
+
+            static final int COL_WEATHER_ID = 0;
+            static final int COL_WEATHER_DATE = 1;
+            static final int COL_WEATHER_DESC = 2;
+            static final int COL_WEATHER_MAX_TEMP = 3;
+            static final int COL_WEATHER_MIN_TEMP = 4;
+            static final int COL_LOCATION_SETTING = 5;
+            static final int COL_WEATHER_CONDITION_ID = 6;
+            static final int COL_COORD_LAT = 7;
+            static final int COL_COORD_LONG = 8;
+
+
 
     //////////////////////////////////
     //                              //
-    //             onCreate         //
+    //           onCreate           //
     //                              //
     //////////////////////////////////
     @Override
@@ -31,29 +61,66 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-            //Cursor Adaptor Methode
-            //-----------------------
-                String locationSetting = Utility.getPreferredLocation(this);
+        //Cursor Loader Methode
+        //-----------------------
+            mForecastAdapteur = new ForecastAdapter(this, null, 0);                     //Create Adapter without Cursor
 
-                // Sort order:  Ascending, by date.
-                String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
-                Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationSetting, System.currentTimeMillis());
-
-                Cursor cur = getContentResolver().query(weatherForLocationUri, null, null, null, sortOrder);
-
-                mForecastAdapteur = new ForecastAdapter(this, cur, 0);
-
-                 ListView listmeteo = (ListView) this.findViewById(R.id.listview_meteo);
-                listmeteo.setAdapter(mForecastAdapteur);
+            ListView listmeteo = (ListView) this.findViewById(R.id.listview_meteo);     //Attach adapter to the listview
+            listmeteo.setAdapter(mForecastAdapteur);
 
 
-//        // Wait Dialogue box
-//            DiagWaitMsg = new ProgressDialog(this);
-//                DiagWaitMsg.setIndeterminate(true);
-//                DiagWaitMsg.setCancelable(false);
-//                DiagWaitMsg.setMessage(getString(R.string.LoadingText));
+        //Click Listener
+        //-------------
+            listmeteo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView adapterView, View view, int position, long l) {
+                    Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                    if (cursor != null) {
+                        String locationSetting = Utility.getPreferredLocation(getApplicationContext());
+
+                        //Start intent
+                            Intent intent = new Intent(   getApplicationContext(), DetailActivity.class)
+                                                     .setData(WeatherContract.WeatherEntry.buildWeatherLocationWithDate(locationSetting, cursor.getLong(COL_WEATHER_DATE)  ));
+                            startActivity(intent);
+                    }
+                }
+            });
+
+
+        //Start Loader
+        //------------
+            getLoaderManager().initLoader(FORECAST_LOADER, null, this);
     }
 
+    //////////////////////////////////
+    //                              //
+    //             Loader           //
+    //                              //
+    //////////////////////////////////
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+
+        //Get Location
+        String locationSetting = Utility.getPreferredLocation(this);
+
+        // Sort order:  Ascending, by date.
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(locationSetting, System.currentTimeMillis());
+
+        //Return Cursor
+        return new CursorLoader(this, weatherForLocationUri,FORECAST_COLUMNS,null, null, sortOrder);
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mForecastAdapteur.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mForecastAdapteur.swapCursor(null);
+    }
 
     //////////////////////////////////
     //                              //
@@ -64,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        //DiagWaitMsg.show();
         Refresh_weather();  //Update meteo
     }
 
@@ -135,5 +201,4 @@ public class MainActivity extends AppCompatActivity {
                 Log.v(LOG_TAG, "No Map editor !!");
             }
     }
-
 }

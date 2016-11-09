@@ -1,17 +1,46 @@
 package com.meteo.meteo;
 
+import android.app.LoaderManager;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class DetailActivity extends AppCompatActivity {
+import com.meteo.meteo.data.WeatherContract.WeatherEntry;
 
-    TextView textview = null;
+public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    private String mMeteoText;
+    private ShareActionProvider mShareActionProvider;
+
+
+    //For the Loader
+    //-------------
+        private static final int DETAIL_LOADER = 1;
+
+        private static final String[] FORECAST_COLUMNS = {
+                WeatherEntry.TABLE_NAME + "." + WeatherEntry._ID,
+                WeatherEntry.COLUMN_DATE,
+                WeatherEntry.COLUMN_SHORT_DESC,
+                WeatherEntry.COLUMN_MAX_TEMP,
+                WeatherEntry.COLUMN_MIN_TEMP,
+        };
+
+        private static final int COL_WEATHER_ID = 0;
+        private static final int COL_WEATHER_DATE = 1;
+        private static final int COL_WEATHER_DESC = 2;
+        private static final int COL_WEATHER_MAX_TEMP = 3;
+        private static final int COL_WEATHER_MIN_TEMP = 4;
+
 
     //////////////////////////////////
     //                              //
@@ -23,11 +52,51 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Intent intent = getIntent();
-        String Text = intent.getStringExtra(intent.EXTRA_TEXT);
+        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
 
-        textview = (TextView) findViewById(R.id.text_meteo);
-        textview.setText(Text);
+    }
+
+    //////////////////////////////////
+    //                              //
+    //             Loader           //
+    //                              //
+    //////////////////////////////////
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.v(MainActivity.LOG_TAG, "In onCreateLoader");
+
+        Intent intent = getIntent();
+            if (intent == null) {
+                return null;
+            }
+
+        return new CursorLoader(this, intent.getData(),FORECAST_COLUMNS,null, null, null);
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        Log.v(MainActivity.LOG_TAG, "In onLoadFinished");
+        if (!data.moveToFirst()) { return; }
+
+        boolean isMetric = Utility.isMetric(this);
+
+        String dateString = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
+        String weatherDescription =data.getString(COL_WEATHER_DESC);
+        String high = Utility.formatTemperature( data.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+        String low = Utility.formatTemperature( data.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
+
+        mMeteoText = String.format("%s - %s - %s/%s", dateString, weatherDescription, low, high);
+
+        TextView detailTextView = (TextView) findViewById(R.id.text_meteo);
+        detailTextView.setText(mMeteoText);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
+
     }
 
     //////////////////////////////////
@@ -38,6 +107,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.detail, menu);
+
         return true;
     }
 
@@ -47,7 +117,9 @@ public class DetailActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.Menu_share :
-                OpenShare();
+                if(mMeteoText != null) {
+                    OpenShare();
+                }
                 return true;
 
             default:
@@ -65,7 +137,7 @@ public class DetailActivity extends AppCompatActivity {
         //Intent
             Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, textview.getText());
+                sendIntent.putExtra(Intent.EXTRA_TEXT, mMeteoText);
                 sendIntent.setType("text/plain");
 
         //Start inttent
@@ -76,4 +148,5 @@ public class DetailActivity extends AppCompatActivity {
                 Log.v(MainActivity.LOG_TAG, "No app to share this msg!");
             }
     }
+
 }
