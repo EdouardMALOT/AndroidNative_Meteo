@@ -27,7 +27,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
     private final Context mContext;
-    private String cityName =  "Inconnu";
+    public static String cityName =  "Inconnu";
 
     //////////////////////////////////
     //                              //

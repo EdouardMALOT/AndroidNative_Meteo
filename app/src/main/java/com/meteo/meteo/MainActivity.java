@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getSupportActionBar().setElevation(0f);
+
         //Cursor Loader Methode
         //-----------------------
             mForecastAdapteur = new ForecastAdapter(this, null, 0);                     //Create Adapter without Cursor
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         //Store Current Location
+        //----------------------
             mCurrentLocation = Utility.getPreferredLocation(this);
 
         //Start Loader
@@ -117,6 +120,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mForecastAdapteur.swapCursor(cursor);
+
+        if(FetchWeatherTask.cityName != null) {
+            setTitle("  " + FetchWeatherTask.cityName);
+        }
     }
 
     @Override

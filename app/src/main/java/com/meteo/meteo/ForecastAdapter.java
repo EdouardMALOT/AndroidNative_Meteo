@@ -63,17 +63,30 @@ public class ForecastAdapter extends CursorAdapter {
 
         //Restore references to the view
         //-------------------------------
-        ViewHolder viewholder = (ViewHolder) view.getTag();
+            ViewHolder viewholder = (ViewHolder) view.getTag();
+
+        //Icon
+        //----
+            switch (getItemViewType(cursor.getPosition())) {
+                case TODAY_VIEW:
+                        // Get weather icon
+                        viewholder.iconView.setImageResource(Utility.getArtResourceForWeatherCondition(cursor.getInt(MainActivity.COL_WEATHER_CONDITION_ID)));
+                    break;
+                default:
+                        // Get weather icon
+                        viewholder.iconView.setImageResource(Utility.getIconResourceForWeatherCondition(cursor.getInt(MainActivity.COL_WEATHER_CONDITION_ID)));
+                    break;
+            }
 
         //Date & Description
         //------------------
-        viewholder.dateView.setText(Utility.formatDate(cursor.getLong(MainActivity.COL_WEATHER_DATE)));
-        viewholder.descriptionView.setText(cursor.getString(MainActivity.COL_WEATHER_DESC));
+            viewholder.dateView.setText(Utility.formatDate(cursor.getLong(MainActivity.COL_WEATHER_DATE)));
+            viewholder.descriptionView.setText(cursor.getString(MainActivity.COL_WEATHER_DESC));
 
         //Températures
         //------------
-        viewholder.highTempView.setText(Utility.formatTemperature(context,cursor.getDouble(MainActivity.COL_WEATHER_MAX_TEMP)));
-        viewholder.lowTempView.setText(Utility.formatTemperature(context,cursor.getDouble(MainActivity.COL_WEATHER_MIN_TEMP)));
+            viewholder.highTempView.setText(Utility.formatTemperature(context,cursor.getDouble(MainActivity.COL_WEATHER_MAX_TEMP)));
+            viewholder.lowTempView.setText(Utility.formatTemperature(context,cursor.getDouble(MainActivity.COL_WEATHER_MIN_TEMP)));
     }
 
     //////////////////////////////////

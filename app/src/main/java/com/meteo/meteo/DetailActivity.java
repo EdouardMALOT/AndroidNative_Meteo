@@ -121,7 +121,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         if (data != null && data.moveToFirst()) {
 
-            mIconView.setImageResource(R.mipmap.ic_launcher);
+            int weatherId = data.getInt(COL_WEATHER_CONDITION_ID);
+            mIconView.setImageResource(Utility.getArtResourceForWeatherCondition(weatherId));
 
             // Read date from cursor and update views for day of week and date
             long date = data.getLong(COL_WEATHER_DATE);
@@ -161,6 +162,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
             // We still need this for the share intent
             mMeteoText = String.format("%s - %s - %s/%s", dateText, description, high, low);
+
+            //Title
+            //-----
+                if(FetchWeatherTask.cityName != null) {
+                    setTitle(FetchWeatherTask.cityName);
+                }
         }
 
     }
