@@ -106,6 +106,12 @@
                 android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
                 android:textAppearance="?android:textAppearanceLarge" />
+
+            <com.meteo.meteo.MyCustomView
+                android:layout_height="100dp"
+                android:layout_width="100dp"
+                />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

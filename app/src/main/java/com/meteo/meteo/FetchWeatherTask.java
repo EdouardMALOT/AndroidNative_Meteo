@@ -16,7 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
 import java.util.Vector;
 
 import okhttp3.OkHttpClient;
@@ -27,7 +26,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, Void> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
     private final Context mContext;
-    public static String cityName =  "Inconnu";
+    protected static String cityName =  "Inconnu";
 
     //////////////////////////////////
     //                              //
