@@ -107,7 +107,7 @@
                 android:layout_width="match_parent"
                 android:textAppearance="?android:textAppearanceLarge" />
 
-            <com.meteo.meteo.MyCustomView
+            <com.meteo.meteo.misc.MyCustomView
                 android:layout_height="100dp"
                 android:layout_width="100dp"
                 />

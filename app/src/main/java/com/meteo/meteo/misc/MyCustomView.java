@@ -1,4 +1,4 @@
-package com.meteo.meteo;
+package com.meteo.meteo.misc;
 
 import android.content.Context;
 import android.graphics.Canvas;

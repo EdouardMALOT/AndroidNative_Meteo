@@ -1,4 +1,4 @@
-package com.meteo.meteo;
+package com.meteo.meteo.misc;
 
 /**
  * Created by edouard on 08/11/16.
@@ -62,7 +62,7 @@ public class Utility {
     //          formatDate          //
     //                              //
     //////////////////////////////////
-    static String formatDate(long dateInMillis) {
+    public static String formatDate(long dateInMillis) {
 
         //Check if the Day is in the next week
         //------------------------------------

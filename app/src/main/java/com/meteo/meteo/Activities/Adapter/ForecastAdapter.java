@@ -1,4 +1,4 @@
-package com.meteo.meteo;
+package com.meteo.meteo.Activities.Adapter;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -10,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.meteo.meteo.Activities.MainActivity;
+import com.meteo.meteo.R;
+import com.meteo.meteo.misc.Utility;
 
 /**
  * Created by edouard on 08/11/16.

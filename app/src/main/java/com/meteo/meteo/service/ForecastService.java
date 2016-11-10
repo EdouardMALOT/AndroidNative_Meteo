@@ -1,8 +1,10 @@
 package com.meteo.meteo.service;
 
 import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -29,9 +31,8 @@ import okhttp3.Response;
 
 public class ForecastService extends IntentService {
 
-    public static final String CITY = "city";
+    public static final String LOCATION_EXTRA = "city";
     public static String cityName =  "Inconnu";
-
 
     //////////////////////////////////
     //                              //
@@ -44,13 +45,28 @@ public class ForecastService extends IntentService {
 
     //////////////////////////////////
     //                              //
+    //  DownloadAlarmReceiver class //
+    //                              //
+    //////////////////////////////////
+    public static class DownloadAlarmReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Intent sendIntent = new Intent(context, ForecastService.class);
+            sendIntent.putExtra(ForecastService.LOCATION_EXTRA, intent.getStringExtra(ForecastService.LOCATION_EXTRA));
+            context.startService(sendIntent);
+        }
+    }
+
+    //////////////////////////////////
+    //                              //
     //         onHandleIntent       //
     //                              //
     //////////////////////////////////
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        String locationQuery = intent.getStringExtra(CITY);;
+        String locationQuery = intent.getStringExtra(LOCATION_EXTRA);;
 
         try {
             //Build Uri

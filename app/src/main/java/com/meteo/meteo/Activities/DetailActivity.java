@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.meteo.meteo.R;
-import com.meteo.meteo.Utility;
+import com.meteo.meteo.misc.Utility;
 import com.meteo.meteo.data.WeatherContract;
 import com.meteo.meteo.data.WeatherContract.WeatherEntry;
 import com.meteo.meteo.service.ForecastService;

@@ -1,6 +1,8 @@
 package com.meteo.meteo.Activities;
 
+import android.app.AlarmManager;
 import android.app.LoaderManager;
+import android.app.PendingIntent;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -16,9 +18,9 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.meteo.meteo.ForecastAdapter;
+import com.meteo.meteo.Activities.Adapter.ForecastAdapter;
 import com.meteo.meteo.R;
-import com.meteo.meteo.Utility;
+import com.meteo.meteo.misc.Utility;
 import com.meteo.meteo.data.WeatherContract;
 import com.meteo.meteo.service.ForecastService;
 
@@ -179,9 +181,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         //Service Methode
         //---------------
             //Intent
-            Intent serviceIntent = new Intent(this, ForecastService.class);
-                serviceIntent.putExtra(ForecastService.CITY, location);
-            startService(serviceIntent);
+            //Intent serviceIntent = new Intent(this, ForecastService.class);
+            //    serviceIntent.putExtra(ForecastService.LOCATION_EXTRA, location);
+            //startService(serviceIntent);
+
+        //Methode Alarm
+        //-------------
+            Intent alarmIntent = new Intent(this, ForecastService.DownloadAlarmReceiver.class);
+                alarmIntent.putExtra(ForecastService.LOCATION_EXTRA, Utility.getPreferredLocation(this));
+
+            //Set the AlarmManager to wake up the system.
+            AlarmManager alarmManager=(AlarmManager)getSystemService(ALARM_SERVICE);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,alarmIntent,PendingIntent.FLAG_ONE_SHOT);//getBroadcast(context, 0, i, 0);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 500, pendingIntent);
     }
 
     //////////////////////////////////
