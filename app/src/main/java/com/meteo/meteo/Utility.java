@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.meteo.meteo.R;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,7 +41,7 @@ public class Utility {
     //      formatTemperature       //
     //                              //
     //////////////////////////////////
-    static String formatTemperature(Context context,double temperature, boolean... isMetric) {
+    public static String formatTemperature(Context context,double temperature, boolean... isMetric) {
 
         double temp;
         if(isMetric.length > 0)
@@ -80,7 +82,7 @@ public class Utility {
     //          getDayName          //
     //                              //
     //////////////////////////////////
-    static String getDayName(long dateInMillis){
+    public static String getDayName(long dateInMillis){
         //Get The Day
             Date date = new Date(dateInMillis);
             String Day=  new SimpleDateFormat("EEEE", Locale.FRANCE).format(date);

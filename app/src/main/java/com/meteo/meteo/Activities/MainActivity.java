@@ -1,4 +1,4 @@
-package com.meteo.meteo;
+package com.meteo.meteo.Activities;
 
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -16,7 +16,11 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.meteo.meteo.ForecastAdapter;
+import com.meteo.meteo.R;
+import com.meteo.meteo.Utility;
 import com.meteo.meteo.data.WeatherContract;
+import com.meteo.meteo.service.ForecastService;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -38,15 +42,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             WeatherContract.LocationEntry.COLUMN_COORD_LONG
     };
 
-            static final int COL_WEATHER_ID = 0;
-            static final int COL_WEATHER_DATE = 1;
-            static final int COL_WEATHER_DESC = 2;
-            static final int COL_WEATHER_MAX_TEMP = 3;
-            static final int COL_WEATHER_MIN_TEMP = 4;
-            static final int COL_LOCATION_SETTING = 5;
-            static final int COL_WEATHER_CONDITION_ID = 6;
-            static final int COL_COORD_LAT = 7;
-            static final int COL_COORD_LONG = 8;
+            public static final int COL_WEATHER_ID = 0;
+            public static final int COL_WEATHER_DATE = 1;
+            public static final int COL_WEATHER_DESC = 2;
+            public static final int COL_WEATHER_MAX_TEMP = 3;
+            public static final int COL_WEATHER_MIN_TEMP = 4;
+            public static final int COL_LOCATION_SETTING = 5;
+            public static final int COL_WEATHER_CONDITION_ID = 6;
+            public static final int COL_COORD_LAT = 7;
+            public static final int COL_COORD_LONG = 8;
 
     //////////////////////////////////
     //                              //
@@ -118,8 +122,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mForecastAdapteur.swapCursor(cursor);
 
-        if(FetchWeatherTask.cityName != null) {
-            setTitle("  " + FetchWeatherTask.cityName);
+        if(ForecastService.cityName != null) {
+            setTitle("  " + ForecastService.cityName);
         }
     }
 
@@ -164,11 +168,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     //                              //
     //////////////////////////////////
     public void Refresh_weather(){
+
+        String location = Utility.getPreferredLocation(this);
+
         //METHODE 2
         //---------
-            FetchWeatherTask weatherTask = new FetchWeatherTask(this);
-            String location = Utility.getPreferredLocation(this);
-            weatherTask.execute(location);
+            //FetchWeatherTask weatherTask = new FetchWeatherTask(this);
+            //weatherTask.execute(location);
+
+        //Service Methode
+        //---------------
+            //Intent
+            Intent serviceIntent = new Intent(this, ForecastService.class);
+                serviceIntent.putExtra(ForecastService.CITY, location);
+            startService(serviceIntent);
     }
 
     //////////////////////////////////

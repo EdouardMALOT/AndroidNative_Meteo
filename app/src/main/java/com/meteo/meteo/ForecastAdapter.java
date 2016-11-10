@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.meteo.meteo.data.WeatherContract;
+import com.meteo.meteo.Activities.MainActivity;
 
 /**
  * Created by edouard on 08/11/16.

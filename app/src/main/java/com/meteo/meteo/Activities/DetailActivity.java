@@ -1,4 +1,4 @@
-package com.meteo.meteo;
+package com.meteo.meteo.Activities;
 
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -15,8 +15,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.meteo.meteo.R;
+import com.meteo.meteo.Utility;
 import com.meteo.meteo.data.WeatherContract;
 import com.meteo.meteo.data.WeatherContract.WeatherEntry;
+import com.meteo.meteo.service.ForecastService;
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -165,8 +168,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
             //Title
             //-----
-                if(FetchWeatherTask.cityName != null) {
-                    setTitle(FetchWeatherTask.cityName);
+                if(ForecastService.cityName != null) {
+                    setTitle(ForecastService.cityName);
                 }
         }
 
