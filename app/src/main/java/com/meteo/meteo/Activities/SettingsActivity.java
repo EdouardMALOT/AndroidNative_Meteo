@@ -1,23 +1,21 @@
-package com.meteo.meteo;
+package com.meteo.meteo.Activities;
  
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.view.KeyEvent;
- 
-/**
- * A {@link PreferenceActivity} that presents a set of application settings.
- * <p>
- * See <a href="http://developer.android.com/design/patterns/settings.html">
- * Android Design: Settings</a> for design guidelines and the <a
- * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
- * API Guide</a> for more information on developing a Settings UI.
- */
+
+import com.meteo.meteo.R;
+
+
 public class SettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
- 
+
+    //////////////////////////////////
+    //                              //
+    //            onCreate          //
+    //                              //
+    //////////////////////////////////
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,24 +24,25 @@ public class SettingsActivity extends PreferenceActivity implements Preference.O
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_location_key)));
 
     }
- 
-    /**
-     * Attaches a listener so the summary is always updated with the preference value.
-     * Also fires the listener once, to initialize the summary (so it shows up before the value
-     * is changed.)
-     */
+    //////////////////////////////////
+    //                              //
+    // bindPreferenceSummaryToValue //
+    //                              //
+    //////////////////////////////////
     private void bindPreferenceSummaryToValue(Preference preference) {
+
         // Set the listener to watch for value changes.
         preference.setOnPreferenceChangeListener(this);
  
         // Trigger the listener immediately with the preference's
         // current value.
-        onPreferenceChange(preference,
-                PreferenceManager
-                        .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), ""));
+        onPreferenceChange(preference, PreferenceManager.getDefaultSharedPreferences(preference.getContext()).getString(preference.getKey(), ""));
     }
- 
+    //////////////////////////////////
+    //                              //
+    //      onPreferenceChange      //
+    //                              //
+    //////////////////////////////////
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
         String stringValue = value.toString();

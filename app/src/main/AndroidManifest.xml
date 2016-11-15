@@ -11,31 +11,38 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <!-- Activities -->
+            <activity   android:name=".Activities.MainActivity"
+                        android:theme="@style/ForecastTheme" >
+                <intent-filter>
+                    <action android:name="android.intent.action.MAIN" />
+                    <category android:name="android.intent.category.LAUNCHER" />
+                </intent-filter>
+            </activity>
 
-        <activity android:name=".DetailActivity"></activity>
+            <activity
+                android:name=".Activities.SettingsActivity"
+                android:label="@string/title_activity_setting"
+                android:theme="@style/SettingsTheme"
+                android:parentActivityName=".Activities.MainActivity">
+                    <meta-data
+                        android:name="android.support.PARENT_ACTIVITY"
+                        android:value=".Activities.MainActivity"
+                        >
+                    </meta-data>
 
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_setting"
-            android:parentActivityName=".MainActivity">
-                <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".MainActivity"
-                    >
-                </meta-data>
+            </activity>
 
-        </activity>
+            <activity android:name=".Activities.DetailActivity"></activity>
 
+        <!-- Uri Provider -->
+            <provider android:authorities="com.meteo.meteo" android:name=".data.WeatherProvider" android:enabled="true" android:exported="true" />
 
-        <provider
-            android:authorities="com.meteo.meteo"
-            android:name=".data.WeatherProvider" />
+        <!-- Alarm to download forecast datas -->
+            <receiver android:name=".service.ForecastService$DownloadAlarmReceiver" android:enabled="true"/>
+
+        <!-- services -->
+            <service android:name=".service.ForecastService" android:enabled="true"/>
 
     </application>
 
