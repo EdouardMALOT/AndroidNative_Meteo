@@ -54,6 +54,7 @@ public class Utility {
         }else{
             temp = temperature;
         }
+
         return context.getString(R.string.format_temperature, temp);
     }
 

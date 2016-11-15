@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             //Set the AlarmManager to wake up the system.
             AlarmManager alarmManager=(AlarmManager)getSystemService(ALARM_SERVICE);
                 PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,alarmIntent,PendingIntent.FLAG_ONE_SHOT);//getBroadcast(context, 0, i, 0);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 500, pendingIntent);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 100, pendingIntent);
     }
 
     //////////////////////////////////
